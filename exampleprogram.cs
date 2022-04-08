@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Collections.Concurrent;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -77,7 +78,7 @@ namespace MessagePackVsProtobuf
 
         private static bool _dryRun = true;
 
-        private static LinkedList<Report> _reports = new();
+        private static Stack<Report> _reports = new();
 
         private const string _filename = "report.json";
 
@@ -109,7 +110,7 @@ namespace MessagePackVsProtobuf
                 _dryRun = true;
                 SerializeProtobuf(p, null);
                 _dryRun = false;
-                var reports = new List<Report>();
+                var reports = new();
                 for (int i = 0; i < _times; i++)
                 {
                     var report = new Report()
@@ -118,7 +119,7 @@ namespace MessagePackVsProtobuf
                         Name = "mgravell/protobuf-net",
                     };
                     var b = SerializeProtobuf(p, report);
-                    reports.AddLast(report);
+                    reports.Push(report);
                 }
 
                 var averageReport = new Report
@@ -130,7 +131,7 @@ namespace MessagePackVsProtobuf
                     ReSerializeTime = reports.Average(report => report.ReSerializeTime),
                     Size = reports.FirstOrDefault()?.Size ?? 0
                 };
-                _reports.AddLast(averageReport);
+                _reports.Push(averageReport);
             }
 
             #endregion
@@ -150,7 +151,7 @@ namespace MessagePackVsProtobuf
                         Name = "Official MsgPack-Cli",
                     };
                     var b = SerializeMsgPack(p, report);
-                    reports.AddLast(report);
+                    reports.Push(report);
                 }
 
                 var averageReport = new Report
@@ -163,7 +164,7 @@ namespace MessagePackVsProtobuf
                     Size = reports.FirstOrDefault()?.Size ?? 0
                 };
 
-                _reports.AddLast(averageReport);
+                _reports.Push(averageReport);
             }
 
             #endregion
@@ -183,7 +184,7 @@ namespace MessagePackVsProtobuf
                         Name = "neuecc/MessagePack-CSharp",
                     };
                     var b = SerializeMessagePack(p, report);
-                    reports.AddLast(report);
+                    reports.Push(report);
                 }
 
                 var averageReport = new Report
@@ -196,7 +197,7 @@ namespace MessagePackVsProtobuf
                     Size = reports.FirstOrDefault()?.Size ?? 0
                 };
 
-                _reports.AddLast(averageReport);
+                _reports.Push(averageReport);
             }
 
             #endregion
@@ -216,7 +217,7 @@ namespace MessagePackVsProtobuf
                         Name = "Newtonsoft.Json",
                     };
                     var b = SerializeNewtonsoftJson(p, report);
-                    reports.AddLast(report);
+                    reports.Push(report);
                 }
 
                 var averageReport = new Report
@@ -229,7 +230,7 @@ namespace MessagePackVsProtobuf
                     Size = reports.FirstOrDefault()?.Size ?? 0
                 };
 
-                _reports.AddLast(averageReport);
+                _reports.Push(averageReport);
             }
 
             #endregion
@@ -240,7 +241,7 @@ namespace MessagePackVsProtobuf
                 _dryRun = true;
                 SerializeProtobuf(l, null);
                 _dryRun = false;
-                var reports = new List<Report>();
+                List<Report> reports = new();
                 for (int i = 0; i < _times; i++)
                 {
                     var report = new Report()
@@ -249,7 +250,7 @@ namespace MessagePackVsProtobuf
                         Name = "mgravell/protobuf-net",
                     };
                     var b = SerializeProtobuf(l, report);
-                    reports.AddLast(report);
+                    reports.Push(report);
                 }
 
                 var averageReport = new Report
@@ -262,7 +263,7 @@ namespace MessagePackVsProtobuf
                     Size = reports.FirstOrDefault()?.Size ?? 0
                 };
 
-                _reports.AddLast(averageReport);
+                _reports.Push(averageReport);
             }
 
             #endregion
@@ -282,7 +283,7 @@ namespace MessagePackVsProtobuf
                         Name = "Official MsgPack-Cli",
                     };
                     var b = SerializeMsgPack(l, report);
-                    reports.AddLast(report);
+                    reports.Push(report);
                 }
 
                 var averageReport = new Report
@@ -295,7 +296,7 @@ namespace MessagePackVsProtobuf
                     Size = reports.FirstOrDefault()?.Size ?? 0
                 };
 
-                _reports.AddLast(averageReport);
+                _reports.Push(averageReport);
             }
 
             #endregion
@@ -315,7 +316,7 @@ namespace MessagePackVsProtobuf
                         Name = "neuecc/MessagePack-CSharp",
                     };
                     var b = SerializeMessagePack(l, report);
-                    reports.AddLast(report);
+                    reports.Push(report);
                 }
 
                 var averageReport = new Report
@@ -328,7 +329,7 @@ namespace MessagePackVsProtobuf
                     Size = reports.FirstOrDefault()?.Size ?? 0
                 };
 
-                _reports.AddLast(averageReport);
+                _reports.Push(averageReport);
             }
 
             #endregion
@@ -348,7 +349,7 @@ namespace MessagePackVsProtobuf
                         Name = "Newtonsoft.Json",
                     };
                     var b = SerializeNewtonsoftJson(l, report);
-                    reports.AddLast(report);
+                    reports.Push(report);
                 }
 
                 var averageReport = new Report
@@ -361,7 +362,7 @@ namespace MessagePackVsProtobuf
                     Size = reports.FirstOrDefault()?.Size ?? 0
                 };
 
-                _reports.AddLast(averageReport);
+                _reports.Push(averageReport);
             }
 
             #endregion
@@ -409,7 +410,7 @@ namespace MessagePackVsProtobuf
                         Name = "neuecc/MessagePack-CSharp without Attribute",
                     };
                     var b = SerializeMessagePack(p2, report);
-                    reports.AddLast(report);
+                    reports.Push(report);
                 }
 
                 var averageReport = new Report
@@ -422,7 +423,7 @@ namespace MessagePackVsProtobuf
                     Size = reports.FirstOrDefault()?.Size ?? 0
                 };
 
-                _reports.AddLast(averageReport);
+                _reports.Push(averageReport);
             }
 
             #endregion
@@ -442,7 +443,7 @@ namespace MessagePackVsProtobuf
                         Name = "neuecc/MessagePack-CSharp without Attribute",
                     };
                     var b = SerializeMessagePack(l2, report);
-                    reports.AddLast(report);
+                    reports.Push(report);
                 }
 
                 var averageReport = new Report
@@ -455,7 +456,7 @@ namespace MessagePackVsProtobuf
                     Size = reports.FirstOrDefault()?.Size ?? 0
                 };
 
-                _reports.AddLast(averageReport);
+                _reports.Push(averageReport);
             }
 
             #endregion
@@ -737,13 +738,13 @@ namespace MessagePackVsProtobuf
         }
 
         /// <summary>
-        /// 生成随机字符串,字典为[A-Za-z0-9]
+        /// 生成随机字符串,字典为[A-Za-z_]
         /// </summary>
         /// <param name="length">字符串长度</param>
         /// <returns></returns>
         public static string NextString(int length)
         {
-            const string dictionary = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+            const string dictionary = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ_";
             int dictCount = dictionary.Length;
             var builder = new StringBuilder(length);
             var bytes = new byte[length * 4];
