@@ -27,7 +27,7 @@ namespace MessagePackVsProtobuf
         public virtual Sex Sex { get; set; }
 
         [DataMember(Order = 4)]
-        public virtual IDictionary<string, string> Items { get; set; }
+        public virtual IReadOnlyDictionary<string, string> Items { get; set; }
     }
 
     public class Person2
@@ -40,7 +40,7 @@ namespace MessagePackVsProtobuf
 
         public virtual Sex Sex { get; set; }
 
-        public virtual IDictionary<string, string> Items { get; set; }
+        public virtual IReadOnlyDictionary<string, string> Items { get; set; }
     }
 
     public enum Sex
@@ -50,6 +50,8 @@ namespace MessagePackVsProtobuf
         Male,
 
         Female,
+
+        Undefined,
     }
 
     public class Report
@@ -75,7 +77,7 @@ namespace MessagePackVsProtobuf
 
         private static bool _dryRun = true;
 
-        private static List<Report> _reports = new List<Report>();
+        private static LinkedList<Report> _reports = new();
 
         private const string _filename = "report.json";
 
@@ -116,7 +118,7 @@ namespace MessagePackVsProtobuf
                         Name = "mgravell/protobuf-net",
                     };
                     var b = SerializeProtobuf(p, report);
-                    reports.Add(report);
+                    reports.AddLast(report);
                 }
 
                 var averageReport = new Report
@@ -128,7 +130,7 @@ namespace MessagePackVsProtobuf
                     ReSerializeTime = reports.Average(report => report.ReSerializeTime),
                     Size = reports.FirstOrDefault()?.Size ?? 0
                 };
-                _reports.Add(averageReport);
+                _reports.AddLast(averageReport);
             }
 
             #endregion
@@ -148,7 +150,7 @@ namespace MessagePackVsProtobuf
                         Name = "Official MsgPack-Cli",
                     };
                     var b = SerializeMsgPack(p, report);
-                    reports.Add(report);
+                    reports.AddLast(report);
                 }
 
                 var averageReport = new Report
@@ -161,7 +163,7 @@ namespace MessagePackVsProtobuf
                     Size = reports.FirstOrDefault()?.Size ?? 0
                 };
 
-                _reports.Add(averageReport);
+                _reports.AddLast(averageReport);
             }
 
             #endregion
@@ -181,7 +183,7 @@ namespace MessagePackVsProtobuf
                         Name = "neuecc/MessagePack-CSharp",
                     };
                     var b = SerializeMessagePack(p, report);
-                    reports.Add(report);
+                    reports.AddLast(report);
                 }
 
                 var averageReport = new Report
@@ -194,7 +196,7 @@ namespace MessagePackVsProtobuf
                     Size = reports.FirstOrDefault()?.Size ?? 0
                 };
 
-                _reports.Add(averageReport);
+                _reports.AddLast(averageReport);
             }
 
             #endregion
@@ -214,7 +216,7 @@ namespace MessagePackVsProtobuf
                         Name = "Newtonsoft.Json",
                     };
                     var b = SerializeNewtonsoftJson(p, report);
-                    reports.Add(report);
+                    reports.AddLast(report);
                 }
 
                 var averageReport = new Report
@@ -227,7 +229,7 @@ namespace MessagePackVsProtobuf
                     Size = reports.FirstOrDefault()?.Size ?? 0
                 };
 
-                _reports.Add(averageReport);
+                _reports.AddLast(averageReport);
             }
 
             #endregion
@@ -247,7 +249,7 @@ namespace MessagePackVsProtobuf
                         Name = "mgravell/protobuf-net",
                     };
                     var b = SerializeProtobuf(l, report);
-                    reports.Add(report);
+                    reports.AddLast(report);
                 }
 
                 var averageReport = new Report
@@ -260,7 +262,7 @@ namespace MessagePackVsProtobuf
                     Size = reports.FirstOrDefault()?.Size ?? 0
                 };
 
-                _reports.Add(averageReport);
+                _reports.AddLast(averageReport);
             }
 
             #endregion
@@ -280,7 +282,7 @@ namespace MessagePackVsProtobuf
                         Name = "Official MsgPack-Cli",
                     };
                     var b = SerializeMsgPack(l, report);
-                    reports.Add(report);
+                    reports.AddLast(report);
                 }
 
                 var averageReport = new Report
@@ -293,7 +295,7 @@ namespace MessagePackVsProtobuf
                     Size = reports.FirstOrDefault()?.Size ?? 0
                 };
 
-                _reports.Add(averageReport);
+                _reports.AddLast(averageReport);
             }
 
             #endregion
@@ -313,7 +315,7 @@ namespace MessagePackVsProtobuf
                         Name = "neuecc/MessagePack-CSharp",
                     };
                     var b = SerializeMessagePack(l, report);
-                    reports.Add(report);
+                    reports.AddLast(report);
                 }
 
                 var averageReport = new Report
@@ -326,7 +328,7 @@ namespace MessagePackVsProtobuf
                     Size = reports.FirstOrDefault()?.Size ?? 0
                 };
 
-                _reports.Add(averageReport);
+                _reports.AddLast(averageReport);
             }
 
             #endregion
@@ -346,7 +348,7 @@ namespace MessagePackVsProtobuf
                         Name = "Newtonsoft.Json",
                     };
                     var b = SerializeNewtonsoftJson(l, report);
-                    reports.Add(report);
+                    reports.AddLast(report);
                 }
 
                 var averageReport = new Report
@@ -359,7 +361,7 @@ namespace MessagePackVsProtobuf
                     Size = reports.FirstOrDefault()?.Size ?? 0
                 };
 
-                _reports.Add(averageReport);
+                _reports.AddLast(averageReport);
             }
 
             #endregion
@@ -407,7 +409,7 @@ namespace MessagePackVsProtobuf
                         Name = "neuecc/MessagePack-CSharp without Attribute",
                     };
                     var b = SerializeMessagePack(p2, report);
-                    reports.Add(report);
+                    reports.AddLast(report);
                 }
 
                 var averageReport = new Report
@@ -420,7 +422,7 @@ namespace MessagePackVsProtobuf
                     Size = reports.FirstOrDefault()?.Size ?? 0
                 };
 
-                _reports.Add(averageReport);
+                _reports.AddLast(averageReport);
             }
 
             #endregion
@@ -440,7 +442,7 @@ namespace MessagePackVsProtobuf
                         Name = "neuecc/MessagePack-CSharp without Attribute",
                     };
                     var b = SerializeMessagePack(l2, report);
-                    reports.Add(report);
+                    reports.AddLast(report);
                 }
 
                 var averageReport = new Report
@@ -453,7 +455,7 @@ namespace MessagePackVsProtobuf
                     Size = reports.FirstOrDefault()?.Size ?? 0
                 };
 
-                _reports.Add(averageReport);
+                _reports.AddLast(averageReport);
             }
 
             #endregion
